@@ -1,6 +1,4 @@
 using BlazingBlog.Application;
-using BlazingBlog.Application.Articles;
-using BlazingBlog.Domain.Articles;
 using BlazingBlog.Infrastructure;
 using BlazingBlog.WebUI.Server.Components;
 
