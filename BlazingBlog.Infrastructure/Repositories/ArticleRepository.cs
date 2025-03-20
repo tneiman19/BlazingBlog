@@ -25,6 +25,21 @@ namespace BlazingBlog.Infrastructure.Repositories
 			return article;
 		}
 
+		public async Task<bool> DeleteArticleAsync(int id)
+		{
+			var articleToDelete = await GetArticleByIdAsync(id);
+
+			if (articleToDelete is null)
+			{
+				return false;
+			}
+
+			_context.Articles.Remove(articleToDelete);
+			await _context.SaveChangesAsync();
+
+			return true;
+		}
+
 		public async Task<List<Article>> GetAllArticlesAsync()
 		{
 			return await _context.Articles.ToListAsync();
