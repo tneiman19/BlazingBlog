@@ -41,8 +41,11 @@ else
 	}
 }
 
+<span class="text-danger">@errorMessage</span>
+
 @code {
 	private bool isEditMode => ArticleId != null;
+	private string errorMessage = string.Empty;
 	[SupplyParameterFromForm]
 	ArticleModel? Article { get; set; }
 	[Parameter]
@@ -54,10 +57,14 @@ else
 		{
 			var result = await Sender.Send(
 				new GetArticleByIdQuery { Id = (int)ArticleId });
-			if (result is not null)
+			if (result.Success)
 			{
-				Article ??= result.Adapt<ArticleModel>();
+				Article ??= result.Value.Adapt<ArticleModel>();
 				Article.Id = (int)ArticleId;
+			}
+			else
+			{
+				SetErrorMessage(result.Error);
 			}
 		}
 		else
@@ -72,16 +79,31 @@ else
 		{
 			var command = Article.Adapt<UpdateArticleCommand>();
 			var result = await Sender.Send(command);
-			if (result is not null)
-				Article = result.Adapt<ArticleModel>();
+			if (result.Success)
+			{ 
+				Article = result.Value.Adapt<ArticleModel>(); 
+			}	
+			else
+			{
+				SetErrorMessage(result.Error);
+			}
+
 		}
 		else
 		{
 
 			var command = Article.Adapt<CreateArticleCommand>();
 			var result = await Sender.Send(command);
-			NavigationManager.NavigateTo($"/article-editor/{result.Id}");
-			//Article = result.Adapt<ArticleModel>();
+			if (result.Success)
+			{
+				NavigationManager.NavigateTo($"/article-editor/{result.Value.Id}");
+			}
+
+			else
+			{
+				SetErrorMessage(result.Error);
+			}
+
 
 		}
 	}
@@ -94,10 +116,21 @@ else
 		}
 
 		var command = new DeleteArticleCommand { Id = (int)ArticleId };
-		var isSuccess = await Sender.Send(command);
-		if (isSuccess)
+		var result = await Sender.Send(command);
+		if (result.Success)
 		{
 			NavigationManager.NavigateTo("/articles");
 		}
+
+		else
+		{
+			SetErrorMessage(result.Error);
+		}
+		
+	}
+
+	void SetErrorMessage(string? error)
+	{
+		errorMessage = error ?? string.Empty;
 	}
 }
