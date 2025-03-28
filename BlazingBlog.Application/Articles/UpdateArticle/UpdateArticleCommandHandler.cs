@@ -13,10 +13,10 @@
 		{
 			var updatedArticle = request.Adapt<Article>();
 			var article = await _articleRepository.UpdateArticleAsync(updatedArticle);
-			
-			if(article is null)
+
+			if (article is null)
 				return Result.Fail<ArticleResponse?>("Article does not exists.");
-			
+
 			return article.Adapt<ArticleResponse>();
 		}
 	}

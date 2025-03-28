@@ -11,7 +11,7 @@
 
 		public async Task<Result<ArticleResponse>> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
 		{
-			var newArticle = request.Adapt<Article>();	
+			var newArticle = request.Adapt<Article>();
 			var article = await _articleRepository.CreateArticleAsync(newArticle);
 			return article.Adapt<ArticleResponse>();
 		}

@@ -8,9 +8,9 @@
 		{
 			_articleRepository = articleRepository;
 		}
-		public async  Task<Result> Handle(DeleteArticleCommand request, CancellationToken cancellationToken)
+		public async Task<Result> Handle(DeleteArticleCommand request, CancellationToken cancellationToken)
 		{
-			var deleted =  await _articleRepository.DeleteArticleAsync(request.Id);
+			var deleted = await _articleRepository.DeleteArticleAsync(request.Id);
 			if (deleted)
 				return Result.Ok();
 

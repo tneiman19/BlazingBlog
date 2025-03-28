@@ -1,12 +1,12 @@
 ﻿namespace BlazingBlog.Domain.Abstractions
 {
-    public class Result
-    {
+	public class Result
+	{
 		public bool Success { get; }
 
 		public bool Failure => !Success;
 
-		public string? Error { get;  }
+		public string? Error { get; }
 
 		protected Result(bool success, string? errorMessage = null)
 		{
@@ -24,12 +24,12 @@
 
 		public static Result<T> FromValue<T>(T? value)
 			=> value != null ? Ok(value) : Fail<T>("Provided value is null.");
-		
+
 	}
 
 	public class Result<T> : Result
 	{
-		public T? Value { get;  }
+		public T? Value { get; }
 
 		protected internal Result(T? value, bool success, string errorMessage)
 			: base(success, errorMessage)

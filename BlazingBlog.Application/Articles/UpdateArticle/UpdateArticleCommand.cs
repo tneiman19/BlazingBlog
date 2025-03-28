@@ -1,7 +1,7 @@
 ﻿namespace BlazingBlog.Application.Articles.UpdateArticle
 {
-  public class UpdateArticleCommand : ICommand<ArticleResponse?>
-    {
+	public class UpdateArticleCommand : ICommand<ArticleResponse?>
+	{
 		public int Id { get; set; }
 		public required string Title { get; set; }
 		public string? Content { get; set; }
