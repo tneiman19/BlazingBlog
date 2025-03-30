@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlazingBlog.Application.Articles
+﻿namespace BlazingBlog.Application.Articles
 {
-    public record struct ArticleResponse(
-         int Id,
-         string Title,
-         string? Content,
-         DateTime DatePublished,
-         bool IsPublished
-        )
-    {
-    }
+	public record struct ArticleResponse(
+		 int Id,
+		 string Title,
+		 string? Content,
+		 DateTime DatePublished,
+		 bool IsPublished
+		)
+	{
+	}
 }

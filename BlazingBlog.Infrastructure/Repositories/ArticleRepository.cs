@@ -1,16 +1,11 @@
 ﻿using BlazingBlog.Domain.Articles;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlazingBlog.Infrastructure.Repositories
 {
-    public class ArticleRepository : IArticleRepository
+	public class ArticleRepository : IArticleRepository
 
-    {
+	{
 		private readonly ApplicationDbContext _context;
 
 		public ArticleRepository(ApplicationDbContext context)
@@ -48,7 +43,7 @@ namespace BlazingBlog.Infrastructure.Repositories
 		public async Task<Article?> GetArticleByIdAsync(int id)
 		{
 			var article = await _context.Articles.FindAsync(id);
-				return article;
+			return article;
 		}
 
 		public async Task<Article?> UpdateArticleAsync(Article article)
