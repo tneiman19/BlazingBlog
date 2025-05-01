@@ -1,15 +1,18 @@
 ﻿@page "/article-editor"
 @page "/article-editor/{ArticleId:int}"
 @using BlazingBlog.Application.Articles.DeleteArticle
+@using BlazingBlog.Infrastructure.Authentication
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
 @inject ISender Sender
 @inject NavigationManager NavigationManager
+@inject UserManager<User> UserManager
 @attribute [Authorize]
 
 @if (isEditMode && Article is not null)
 {
     <PageTitle>Edit Article "@Article.Title"</PageTitle>
-    <h2 class="text-3xl font-extrabold text-gray-50">Edit Article "@Article.Title"</h2>
+    <h2 class="text-3xl font-extrabold text-gray-50">Edit Article "@Article.Title" by @Article.UserName</h2>
 }
 else
 {
@@ -21,8 +24,8 @@ else
 {
     <EditForm Model="Article" OnSubmit="HandleSubmit" FormName="ArticleEditorForm" class="space-y-6 my-4">
         <div>
-            <label for="name" class="text-sm">Full name</label>
-            <InputText id="name" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="Article.Title" />
+            <label for="title" class="text-sm">Title</label>
+            <InputText id="title" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="Article.Title" />
         </div>
         <div>
             <label for="content" class="text-sm">Content</label>
@@ -30,7 +33,7 @@ else
         </div>
         <div>
             <label for="date" class="text-sm">Date</label>
-            <InputDate id="date" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="Article.DatePublished" />
+            <InputDate id="date" Type="InputDateType.DateTimeLocal" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="Article.DatePublished" />
         </div>
         <div class="form-check">
             <InputCheckbox class="form-check-input checked:bg-blue-400" @bind-Value="Article.IsPublished" />
@@ -60,6 +63,8 @@ else
     ArticleModel? Article { get; set; }
     [Parameter]
     public int? ArticleId { get; set; }
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -97,6 +102,7 @@ else
         else
         {
             var command = Article.Adapt<CreateArticleCommand>();
+            command.UserId = UserManager.GetUserId(HttpContext.User);
             var result = await Sender.Send(command);
             if (result.Success)
                 NavigationManager.NavigateTo($"/article-editor/{result.Value.Id}");
