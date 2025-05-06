@@ -31,6 +31,12 @@ namespace BlazingBlog.Infrastructure.Authentication
 
 			var result = await _userManager.CreateAsync(user, password);
 
+			if (result.Succeeded)
+			{
+
+				await _userManager.AddToRoleAsync(user, "Reader");
+			}
+
 			var response = new RegisterUserResponse
 			{
 				Succeeded = result.Succeeded,
