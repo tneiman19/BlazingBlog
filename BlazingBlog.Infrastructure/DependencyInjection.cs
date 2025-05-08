@@ -25,6 +25,8 @@ namespace BlazingBlog.Infrastructure
 
 			AddAuthentication(services);
 
+			services.AddHttpContextAccessor();
+
 
 			services.AddScoped<IArticleRepository, ArticleRepository>();
 			services.AddScoped<IUserRepository, UserRepository>();
