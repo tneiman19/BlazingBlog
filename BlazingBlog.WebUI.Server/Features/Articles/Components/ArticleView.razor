@@ -12,6 +12,12 @@ else
     <span class="text-xl-start text-gray-400">
         <time>@article.DatePublished</time>
         <span>by @article.UserName</span>
+        @if (article.CanEdit)
+        {
+            <span>
+               |  <a href="/article-editor/@article.Id" class="text-xs text-blue-400">Edit Article</a>
+            </span>
+        }
     </span>
     <p class="max-w-full prose text-gray-100">
         @article.Content
