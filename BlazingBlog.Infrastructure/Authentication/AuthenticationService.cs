@@ -1,4 +1,5 @@
 ﻿using BlazingBlog.Application.Authentication;
+using BlazingBlog.Infrastructure.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace BlazingBlog.Infrastructure.Authentication
@@ -30,6 +31,12 @@ namespace BlazingBlog.Infrastructure.Authentication
 			};
 
 			var result = await _userManager.CreateAsync(user, password);
+
+			if (result.Succeeded)
+			{
+
+				await _userManager.AddToRoleAsync(user, "Reader");
+			}
 
 			var response = new RegisterUserResponse
 			{

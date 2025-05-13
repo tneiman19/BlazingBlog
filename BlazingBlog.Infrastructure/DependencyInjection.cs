@@ -1,8 +1,10 @@
 ﻿using BlazingBlog.Application.Authentication;
+using BlazingBlog.Application.Users;
 using BlazingBlog.Domain.Articles;
 using BlazingBlog.Domain.Users;
 using BlazingBlog.Infrastructure.Authentication;
 using BlazingBlog.Infrastructure.Repositories;
+using BlazingBlog.Infrastructure.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
@@ -23,9 +25,12 @@ namespace BlazingBlog.Infrastructure
 
 			AddAuthentication(services);
 
+			services.AddHttpContextAccessor();
+
 
 			services.AddScoped<IArticleRepository, ArticleRepository>();
 			services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<IUserService, UserService>();
 
 			return services;
 		}
@@ -49,6 +54,7 @@ namespace BlazingBlog.Infrastructure
 				.AddIdentityCookies();
 
 			services.AddIdentityCore<User>()
+				.AddRoles<IdentityRole>()
 			   .AddEntityFrameworkStores<ApplicationDbContext>()
 			   .AddSignInManager()
 			   .AddDefaultTokenProviders();

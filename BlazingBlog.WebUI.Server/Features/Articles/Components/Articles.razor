@@ -7,23 +7,23 @@
 <div class="space-y-6">
 <h2 class="text-3xl font-extrabold text-gray-50">Articles</h2>
 
-<AuthorizeView>
+<AuthorizeView Roles="Admin, Writer">
     <a href="/article-editor" class="p-3 text-sm font-bold uppercase rounded bg-blue-400 text-gray-900 inline-block">Create New Article</a>
 </AuthorizeView>
 
 @if (articles is null)
-{
-    <p><em>Loading articles...</em></p>
-}
-else if (articles.Count == 0)
-{
-    <p><em>No article found. :(</em></p>
-}
-else
-{
-    <ul class="space-y-8 xl:space-y-10">
-    @foreach (var article in articles)
     {
+        <p><em>Loading articles...</em></p>
+    }
+    else if (articles.Count == 0)
+    {
+        <p><em>No article found. :(</em></p>
+    }
+    else
+    {
+        <ul class="space-y-8 xl:space-y-10">
+            @foreach (var article in articles)
+            {
                 <li>
                     <article>
                         <dl>
@@ -34,14 +34,17 @@ else
                         </dl>
                         <div class="space-y-1">
                             <h3 class="text-2xl font-bold">
-                                <a href="#" class="text-gray-50">@article.Title</a>
+                                <a href="/articles/@article.Id" class="text-gray-50">@article.Title</a>
                             </h3>
                             <p class="max-w-full prose dark:text-gray-100">@article.Content</p>
-                            <AuthorizeView>
-                            <div class="flex flex-wrap space-x-3">
-                                <a href="/article-editor/@article.Id" class="text-xs text-blue-400">Edit Article</a>
-                            </div>
-                            </AuthorizeView>
+
+                            @if (article.CanEdit)
+                            {
+                                <div class="flex flex-wrap space-x-3">
+                                    <a href="/article-editor/@article.Id" class="text-xs text-blue-400">Edit Article</a>
+                                </div>
+                            }
+
                         </div>
                     </article>
                 </li>
