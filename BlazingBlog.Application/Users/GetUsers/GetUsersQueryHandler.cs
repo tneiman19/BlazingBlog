@@ -23,11 +23,17 @@ namespace BlazingBlog.Application.Users.GetUsers
 			}
 
 			var users = await _userRepository.GetAllUsersAsync();
-			var respose = users.Adapt<List<UserResponse>>();
+			var response = new List<UserResponse>();
 
-			return respose;
+			foreach (var user in users)
+			{
+				var userResponse = user.Adapt<UserResponse>();
+				userResponse.Roles =
+					string.Join(", ", await _userService.GetUserRolesAsync(user.Id));
+				response.Add(userResponse);
+			}
 
-
+			return response;
 		}
 	}
 }
