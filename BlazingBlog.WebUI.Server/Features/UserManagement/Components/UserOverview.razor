@@ -19,14 +19,14 @@ else
 {
     <QuickGrid Items="users.AsQueryable()">
         <PropertyColumn Property="@(u => u.UserName)"
-        Sortable="true" Title="Name"></PropertyColumn>
+                        Sortable="true" Title="Name"></PropertyColumn>
         <PropertyColumn Property="@(u => u.Email)"
-        Sortable="true"></PropertyColumn>
-        <PropertyColumn Property="@(u => u.Roles)"> </PropertyColumn>
+                        Sortable="true"></PropertyColumn>
+        <PropertyColumn Property="@(u => u.Roles)"></PropertyColumn>
         <TemplateColumn>
             <button @onclick="() => OpenModal(context.Id, context.UserName)"
                     class="p-2 text-sm font-bold uppercase rounded bg-blue-400 text-gray-900 inline-block hover:bg-blue-300">
-               🔏 Manage Roles
+                🔐 Manage Roles
             </button>
         </TemplateColumn>
     </QuickGrid>
@@ -44,11 +44,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Sender.Send(new GetUsersQuery());
-        if (result.Success)
-            users = result;
-        else
-            users = new();
+        await LoadUsers();
+
+
+
+
     }
 
     private void OpenModal(string userId, string userName)
@@ -59,8 +59,19 @@ else
         Console.WriteLine($"Open Modal -> {selectedUserName} // {selectedUserId}");
     }
 
-    private void CloseModal()
+    private async void CloseModal()
     {
         showModal = false;
+        await LoadUsers();
+        StateHasChanged();
+    }
+
+    private async Task LoadUsers()
+    {
+        var result = await Sender.Send(new GetUsersQuery());
+        if (result.Success)
+            users = result;
+        else
+            users = new();
     }
 }

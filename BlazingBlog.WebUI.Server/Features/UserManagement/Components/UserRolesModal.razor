@@ -12,19 +12,19 @@
                     <PropertyColumn Property="@(r => r)"></PropertyColumn>
                     <TemplateColumn>
                         <button @onclick="() => RemoveRole(context)"
-                        class="p-2 text-sm">
+                                class="p-2 text-sm">
                             ❌
                         </button>
                     </TemplateColumn>
                 </QuickGrid>
             </p>
             <div class="mt-2">
-                <input @bind="newRole" class="p-2 mr-2 rounded bg-dark" placeholder="Add new role" />
+                <input @bind="newRole" class="p-2 mr-2 rounded" placeholder="Add new role" />
                 <button @onclick="AddRole">Add Role</button>
             </div>
             <div class="flex flex-col justify-end gap-3 mt-6 sm:flex-row">
                 <button @onclick="CloseModal"
-                class="px-6 py-2 rounded-sm shadow-sm bg-blue-400 text-gray-900 hover:bg-blue-300">
+                        class="px-6 py-2 rounded-sm shadow-sm bg-blue-400 text-gray-900 hover:bg-blue-300">
                     Close
                 </button>
             </div>
@@ -56,7 +56,12 @@
     {
         if (!string.IsNullOrWhiteSpace(newRole))
         {
-            Roles.Add(newRole);
+            await Sender.Send(new AddRoleToUserCommand
+                {
+                    UserId = UserId,
+                    RoleName = newRole
+                });
+            await LoadUserRoles();
             newRole = string.Empty;
         }
     }
@@ -69,13 +74,15 @@
     private void CloseModal()
     {
         ShowModal = false;
+        newRole = string.Empty;
         ModalClosed.InvokeAsync(ShowModal);
     }
+
     private async Task LoadUserRoles()
     {
         if (ShowModal && UserId is not null)
         {
             Roles = (await Sender.Send(new GetUserRolesQuery { UserId = UserId })).Value ?? [];
-        } 
+        }
     }
 }
