@@ -1,0 +1,77 @@
+﻿@page "/user-overview"
+@inject ISender Sender
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>User Overview</PageTitle>
+
+<h2 class="text-3xl font-extrabold text-gray-50">User Overview</h2>
+
+@if (users is null)
+{
+    <span>Loading users...</span>
+}
+else if (users.Count <= 0)
+{
+    <span>There are no users to see.</span>
+}
+else
+{
+    <QuickGrid Items="users.AsQueryable()">
+        <PropertyColumn Property="@(u => u.UserName)"
+                        Sortable="true" Title="Name"></PropertyColumn>
+        <PropertyColumn Property="@(u => u.Email)"
+                        Sortable="true"></PropertyColumn>
+        <PropertyColumn Property="@(u => u.Roles)"></PropertyColumn>
+        <TemplateColumn>
+            <button @onclick="() => OpenModal(context.Id, context.UserName)"
+                    class="p-2 text-sm font-bold uppercase rounded bg-blue-400 text-gray-900 inline-block hover:bg-blue-300">
+                🔐 Manage Roles
+            </button>
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+<UserRolesModal ShowModal="@showModal"
+                UserId="@selectedUserId" UserName="@selectedUserName"
+                ModalClosed="CloseModal" />
+
+@code {
+    private List<UserResponse>? users = null;
+    private bool showModal = false;
+    private string selectedUserId = string.Empty;
+    private string selectedUserName = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+
+
+
+
+    }
+
+    private void OpenModal(string userId, string userName)
+    {
+        selectedUserId = userId;
+        selectedUserName = userName;
+        showModal = true;
+        Console.WriteLine($"Open Modal -> {selectedUserName} // {selectedUserId}");
+    }
+
+    private async void CloseModal()
+    {
+        showModal = false;
+        await LoadUsers();
+        StateHasChanged();
+    }
+
+    private async Task LoadUsers()
+    {
+        var result = await Sender.Send(new GetUsersQuery());
+        if (result.Success)
+            users = result;
+        else
+            users = new();
+    }
+}
